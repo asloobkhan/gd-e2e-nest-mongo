@@ -1,19 +1,30 @@
-FROM node:carbon
-# App directory
-WORKDIR /app
+FROM node:20-alpine AS build
 
-# App dependencies
+WORKDIR /usr/local/app
+
 COPY package*.json ./
-RUN npm i
+RUN npm i --legacy-peer-deps
 
-# Copy app source code
 COPY . .
+RUN npm run build
 
-# Env setup
-COPY .env.example .env
+FROM node:20-alpine AS runtime
 
-#Expose port and begin application
-EXPOSE 9001
+WORKDIR /usr/local/app
 
-# Start the app
-CMD [ "npm", "run", "start:dev"]
+ENV NODE_ENV=production
+ENV PORT=9000
+
+RUN addgroup -S app && adduser -S -G app app
+
+COPY --from=build --chown=app:app /usr/local/app/dist ./dist
+COPY --chown=app:app package*.json ./
+RUN npm i --omit=dev --legacy-peer-deps \
+  && npm cache clean --force \
+  && chown -R app:app /usr/local/app
+
+USER app
+
+EXPOSE 9000
+
+CMD ["node", "dist/main.js"]

@@ -1,214 +1,176 @@
+<h1 align="center">API Starter (Mongo)</h1>
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
 
-<p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, heavily inspired by <a href="https://angular.io" target="blank">Angular</a>.</p>
+<p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, paired with Mongoose and a built-in Model Context Protocol (MCP) module for AI workflows.</p>
 
 <p align="center">
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://travis-ci.org/msanvarov/nest-rest-mongo-boilerplate"><img src="https://travis-ci.org/msanvarov/nest-rest-mongo-boilerplate.svg?branch=master" alt="Travis" /></a>
-<a href="https://paypal.me/kamilmysliwiec"><img src="https://img.shields.io/badge/Donate-PayPal-dc3d53.svg"/></a>
-<a href="https://twitter.com/nestframework"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+  <a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+  <a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+  <a href="https://github.com/msanvarov/nest-rest-mongo-boilerplate/actions"><img src="https://github.com/msanvarov/nest-rest-mongo-boilerplate/actions/workflows/lint-and-test-merge.yml/badge.svg" alt="Github Actions" /></a>
 </p>
-    
-### 📚 Description
 
-This boilerplate is made to quickly prototype backend applications. It comes with database, logging, security, and authentication features out of the box.
+## Table of Contents
 
----
+1. [Description](#description)
+2. [Stack](#stack)
+3. [Prerequisites](#prerequisites)
+4. [Deployment](#deployment)
+5. [Environment Configuration](#environment-configuration)
+6. [MCP Module](#mcp-module)
+7. [Web Framework](#web-framework)
+8. [Testing](#testing)
+9. [TypeDocs](#typedocs)
+10. [Open API](#open-api)
+11. [Mongoose](#mongoose)
+12. [Logs](#logs)
+13. [Contribution](#contribution)
 
-### 🛠️ Prerequisites
+## Description
 
-#### Non Docker
+This boilerplate is made to quickly prototype backend applications. It comes with authentication, authorization, logging, CRUD features, MongoDB persistence via Mongoose, and a built-in Model Context Protocol server + client out of the box.
 
-- Please make sure to either have MongoDB Community installed locally or a subscription to Mongo on the cloud by configuration a cluster in [atlas](https://www.mongodb.com/cloud/atlas). 
+## Stack
 
-#### Docker 🐳
+| Layer    | Tech                                                                                |
+| -------- | ----------------------------------------------------------------------------------- |
+| Runtime  | Node.js 20+                                                                         |
+| API      | NestJS 11 (Fastify adapter), Mongoose 8, Passport JWT, nest-access-control, Swagger |
+| AI / MCP | `@modelcontextprotocol/sdk` 1.x (server + client over Streamable HTTP)              |
+| Database | MongoDB (any 6+ release)                                                            |
+| Tooling  | TypeScript 5.6, ESLint 9, Prettier 3, Jest 29                                       |
 
-- Please make sure to have docker desktop setup on any preferred operating system to quickly compose the required dependencies. Then follow the docker procedure outlined below.
+## Prerequisites
 
-**Note**: Docker Desktop comes free on both Mac and Windows, but it only works with Windows 10 Pro. A workaround is to get [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/) which will bypass the Windows 10 Pro prerequisite by executing in a VM.
+### Non-Docker
 
----
+- Node.js 20+.
+- A local or hosted MongoDB instance (Community edition, or Atlas).
 
-### 🚀 Deployment
+### Docker
 
-#### Manual Deployment without Docker
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) running locally.
 
-- Create a `.env` file using the `cp .env.example .env` command and replace the existing env variables with personal settings (MongoDB URL either `srv` or `localhost`)
-	- Modify the connection string by modifying the following [line](https://github.com/msanvarov/nest-rest-mongo-boilerplate/blob/master/.env.example#L10).
+## Deployment
 
-- Download dependencies using `npm i` or `yarn`
+### Manual Deployment without Docker
 
-- Start the app in pre-production mode using `npm run start` or `npm run start:dev` for development (the app will be exposed on the port 9000; not to conflict with React, Angular, or Vue)
+- Clone the repo: `git clone https://github.com/msanvarov/nest-rest-mongo-boilerplate`.
+- Install dependencies: `npm install`.
+- Copy the env template: `cp .env.example .env` and fill in valid values.
+- Start the app in development mode: `npm run start:dev` (served on http://localhost:9000).
 
-#### Deploying with Docker 🐳
-
-- Execute the following command in-app directory:
-
-```bash
-# creates and loads the docker container with required configuration
-$ docker-compose up -d 
-```
-- The following command will set up and run the docker project for quick use. Then the web application, and MongoDB will be exposed to http://localhost:9000 and http://localhost:27017 respectively.
-
-### 🔒 Environment Configuration
-
-By default, the application comes with a config module that can read in every environment variable from the `.env` file.
-
-**APP_ENV** - the application environment to execute as, either in development or production. Determines the type of logging options to utilize. Options: `dev` or `prod`. 
-
-**APP_URL** - the base URL for the application. Made mainly to showcase the power of `ConfigService` and can be removed as it doesn't serve any other purpose
-
-**WEBTOKEN_SECRET_KEY** - the secret key to encrypt/decrypt web tokens with. Make sure to generate a random alphanumeric string for this.
-
-**WEBTOKEN_EXPIRATION_TIME** - **the time in seconds** indicating when the web token will expire; by default, it's 2400 seconds which is 40 mins.
-
-**DB_URL** - the URL to the MongoDB collection
-
----
-
-### 🏗 Choosing a Web Framework
-
-This boilerplate comes with [Fastify](https://github.com/fastify/fastify) out of the box as it offers [performance benefits](https://github.com/nestjs/nest/blob/master/benchmarks/all_output.txt) over Express. But this can be changed to use [Express](https://expressjs.com/) framework instead of Fastify. 
-
-For interchangeability:
-
-- Replace the following lines of code in the [main.ts file](https://github.com/msanvarov/nest-rest-mongo-boilerplate/blob/master/src/main.ts) with the ones detailed below.
-
-Fastify:
-
-```ts
-// for fastify:
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
-import * as headers from 'fastify-helmet';
-import * as fastifyRateLimiter from 'fastify-rate-limit';
-const app = await NestFactory.create<NestFastifyApplication>(
-  AppModule,
-  new FastifyAdapter({ logger: console }),
-);
-app.register(headers);
-app.register(fastifyRateLimiter, {
-  max: 100,
-  timeWindow: '1 minute',
-});
-```
-
-Express:
-
-```ts
-// for express:
-import * as headers from 'helmet';
-import * as rateLimiter from 'express-rate-limit';
-const app = await NestFactory.create(AppModule, {
-  logger: console,
-});
-app.use(headers());
-app.use(
-  rateLimiter({
-    windowMs: 60, // 1 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-  }),
-);
-```
-
-**Note**: The boilerplate comes with production dependencies for both Express and Fastify to support moving between two. But this is going to leave it bloated especially when only **one web framework is used at a time**. Thus, **it is recommended that when deploying to production, unused dependencies are purged.** 
-
-If you choose to **use Fastify**, this command will **purge all of the Express dependencies**:
+### Deploying with Docker
 
 ```bash
-# removing Express dependencies
-$ npm rm @nestjs/platform-express express-rate-limit helmet swagger-ui-express @types/express --save
+docker compose up -d
 ```
 
-If you choose to **use Express**, this command will **purge all of the Fastify dependencies**:
+This brings up the API on http://localhost:9000 and MongoDB on the standard 27017 port.
+
+## Environment Configuration
+
+By default, the application reads every env var from `.env`.
+
+- **APP_ENV** — `development` or `production`. Drives logging.
+- **APP_URL** — base URL for the application (used by the demo `GET /` handler).
+- **PORT** — HTTP port; defaults to 9000.
+- **WEBTOKEN_SECRET_KEY** — random secret used to sign JWTs.
+- **WEBTOKEN_EXPIRATION_TIME** — seconds before a JWT expires (default 2400).
+- **DB_URL** — MongoDB connection string.
+- **MCP_SERVER_NAME / MCP_SERVER_VERSION** — identity reported by the local MCP server.
+- **MCP_CLIENT_REMOTES** — comma-separated list of external MCP server endpoints to consume as a client (Streamable HTTP URLs).
+- **MCP_ALLOWED_MODELS** — comma-separated whitelist of mongoose model names the MCP tools are allowed to query. Defaults to `Profile`.
+
+## MCP Module
+
+This project ships with a first-class Model Context Protocol integration so the API can both **expose** itself to AI clients and **consume** other MCP servers.
+
+### What's included
+
+| Piece               | Path                                     | Role                                                                              |
+| ------------------- | ---------------------------------------- | --------------------------------------------------------------------------------- |
+| `McpServerService`  | `src/modules/mcp/mcp-server.service.ts`  | In-process MCP server with mongo-aware tools and resources.                       |
+| `McpClientService`  | `src/modules/mcp/mcp-client.service.ts`  | Connects to every endpoint in `MCP_CLIENT_REMOTES` and mirrors their inventory.   |
+| `McpGatewayService` | `src/modules/mcp/mcp-gateway.service.ts` | Unifies the local + remote inventory, routes invocations, runs the chat preview. |
+| `McpController`     | `src/modules/mcp/mcp.controller.ts`      | REST surface plus the native Streamable HTTP transport.                           |
+
+### Mongo-aware tools
+
+| Tool                 | Purpose                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------ |
+| `list-collections`   | List every mongoose model the server is allowed to inspect (controlled by `MCP_ALLOWED_MODELS`). |
+| `count-documents`    | Count documents in an allowed model that match a filter.                                         |
+| `find-documents`     | Run a `find()` on an allowed model with optional filter/projection. Limit clamped to 100.        |
+| `aggregate-pipeline` | Run an aggregation pipeline against an allowed model. A trailing `$limit 100` stage is appended. |
+| `get-profile`        | Convenience wrapper to look up a profile by username.                                            |
+
+Resources: `mcp://nest/schema/profile`, `mcp://nest/server-info`.
+
+> The whitelist prevents arbitrary collection access. Edit `MCP_ALLOWED_MODELS` to opt new models in.
+
+### Endpoints
+
+| Method | Path                 | Purpose                                                              |
+| ------ | -------------------- | -------------------------------------------------------------------- |
+| GET    | `/api/mcp/inventory` | Returns servers + tools + resources + prompts as JSON.               |
+| POST   | `/api/mcp/invoke`    | Body: `{ serverId, name, arguments }` — invokes a tool.              |
+| GET    | `/api/mcp/resource`  | Query: `serverId`, `uri` — reads a resource.                         |
+| POST   | `/api/mcp/chat`      | Body: `{ message, toolCall?, history? }` — chat preview entry point. |
+| ANY    | `/api/mcp/transport` | Native MCP Streamable HTTP endpoint for AI clients.                  |
+
+### Connecting an external MCP client
+
+Point a Streamable-HTTP-aware MCP client (Claude Desktop, Claude Code, mcp-cli, etc.) at `http://localhost:9000/api/mcp/transport`. The server advertises `MCP_SERVER_NAME@MCP_SERVER_VERSION` and exposes the registered tools and resources.
+
+### Consuming external MCP servers
+
+Set `MCP_CLIENT_REMOTES` to a comma-separated list of Streamable HTTP URLs. On startup the API connects to each, mirrors their inventory into `/api/mcp/inventory`, and routes invocations through the same `/api/mcp/invoke` and `/api/mcp/chat` endpoints.
+
+## Web Framework
+
+The API runs on [Fastify](https://github.com/fastify/fastify) via `@nestjs/platform-fastify`. The previous version of this boilerplate shipped both Express and Fastify adapters in `dependencies`; this revision drops the Express path since the modern `@fastify/*` plugins cover the same surface with better performance.
+
+## Testing
+
+### Docker
 
 ```bash
-# removing Fastify dependencies
-$ npm rm @nestjs/platform-fastify fastify-helmet fastify-rate-limit fastify-swagger --save
+docker exec -it nest-mongo-api npm run test
 ```
 
----
-
-### ✅ Testing
-
-#### Docker 🐳
+### Non-Docker
 
 ```bash
-# unit tests
-$ docker exec -it nest yarn test
-
-# e2e tests
-$ docker exec -it nest yarn test:e2e
-
-# test coverage
-$ docker exec -it nest yarn test:cov
+npm run test
+npm run test:e2e
+npm run test:cov
 ```
 
-#### Non-Docker
+## TypeDocs
 
-```bash
-# unit tests
-$ npm run test
+`npm run typedocs` builds API documentation into the `docs/` folder and serves it locally on http://localhost:8080.
 
-# e2e tests
-$ npm run test:e2e
+## Open API
 
-# test coverage
-$ npm run test:cov
-```
+Swagger UI is served at `/api/docs`. Configuration lives in `src/main.ts`.
 
----
+## Mongoose
 
-### 💡 TypeDocs
+Connection setup is in `src/modules/app/app.module.ts`. The `Profile` model lives in `src/modules/profile/profile.model.ts`. To add a model, define the schema, register it via `MongooseModule.forFeature`, and add the model name to `MCP_ALLOWED_MODELS` if you want it accessible to MCP clients.
 
-The documentation for this boilerplate can be found [on Github pages](https://msanvarov.github.io/nest-rest-mongo-boilerplate/).
+## Logs
 
-The docs can be generated on-demand, simply, by typing `npm run typedocs`. This will produce a **docs** folder with the required front-end files and **start hosting on [localhost](http://localhost:8080)**.
+Winston is wired up via `nest-winston`. In development the API logs to the console with timestamps; in production it adds a JSON error file at `logs/error.log` and a daily-rotated archive under `logs/application-YYYY-MM-DD.log`.
 
-```bash
-# generate docs for code
-$ npm run typedocs
-```
+## Contribution
 
----
-
-### 📝 Open API
-
-Out of the box, the web app comes with Swagger; an [open api specification](https://swagger.io/specification/), that is used to describe RESTful APIs. Nest provides a [dedicated module to work with it](https://docs.nestjs.com/recipes/swagger).
-
-The configuration for Swagger can be found at this [location](https://github.com/msanvarov/nest-rest-mongo-boilerplate/tree/master/src/swagger).
-
----
-
-### ✨ Mongoose
-
-Mongoose provides a straight-forward, schema-based solution to model your application data. It includes built-in type casting, validation, query building, business logic hooks and more, out of the box. Please view the [documentation](https://mongoosejs.com) for further details.
-
-The configuration for Mongoose can be found in the [app module](https://github.com/msanvarov/nest-rest-mongo-boilerplate/blob/master/src/modules/app/app.module.ts#L17).
-
----
-
-### 🔊 Logs
-
-This boilerplate comes with an integrated Winston module for logging, the configurations for Winston can be found in the [app module](https://github.com/msanvarov/nest-rest-mongo-boilerplate/blob/master/src/modules/app/app.module.ts#L27).
-
----
-
-### 👥 Contribution
-
-PRs are appreciated, I fully rely on the passion ❤️ of the OS developers.
-
----
+PRs are appreciated.
 
 ## License
 
 Nest is [MIT licensed](LICENSE).
 
 [Author](https://sal-anvarov.com/)
-
