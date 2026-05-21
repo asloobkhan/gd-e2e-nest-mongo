@@ -1,0 +1,28 @@
+name: Lint and Test on PR
+on: pull_request
+jobs:
+  build_and_preview:
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm i --legacy-peer-deps
+
+      - name: Lint
+        env:
+          ESLINT_USE_FLAT_CONFIG: 'false'
+        run: npx eslint "src/**/*.ts"
+
+      - name: Test
+        run: npx jest --passWithNoTests
