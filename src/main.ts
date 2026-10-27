@@ -54,7 +54,7 @@ async function bootstrap(): Promise<void> {
     }),
   );
 
-  const port = 9100; // e2e fault: ignores PORT
+  const port = Number(config.get<number>('PORT')) || 9000;
   await app.listen(port, '0.0.0.0');
 
   Logger.log(
